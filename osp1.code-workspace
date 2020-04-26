@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "/home/os1/Downloads/final-src-osc10e"
+		},
+		{
+			"path": "/home/os1/linux-4.14.25/kernel"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"string.h": "c",
+			"stdlib.h": "c",
+			"signal.h": "c",
+			"tellwait.h": "c"
+		}
+	}
+}
