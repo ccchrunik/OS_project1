@@ -76,7 +76,7 @@ void back_heapify(PQMgr_t* q, task_t* t)
 
 }
 
-void add(PQMgr_t* q, task_t *t)
+void pq_add(PQMgr_t* q, task_t *t)
 {
     if(q->length == 0)
     {
@@ -89,7 +89,7 @@ void add(PQMgr_t* q, task_t *t)
     }
 }
 
-void remove(PQMgr_t* q)
+void pq_remove(PQMgr_t* q)
 {
     if(q->length <= 1)
     {

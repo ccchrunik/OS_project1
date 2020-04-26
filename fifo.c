@@ -87,7 +87,7 @@ void schedule(tasks_t* taskArr)
         for(int tp = count; tp < num; ++tp)
         {
             // for multiple processes arrive at the same time
-            if(taskArr->arr[tp].rd_time >= timeline)
+            if(taskArr->arr[tp].rd_time <= timeline)
             {
                 create_flag += 1;
             }
@@ -98,10 +98,10 @@ void schedule(tasks_t* taskArr)
         while(create_flag > 0)
         {
             // record start time
-            getnstimeofday(&taskArr->arr[count].start_time);
+
             // create new process
-            pid = fork();
             t = &taskArr->arr[count];
+            pid = fork();
 
             // child process
             if(pid == 0)
@@ -131,7 +131,7 @@ void schedule(tasks_t* taskArr)
                 // start processing
                 for(int i = 0; i < t->exe_time; ++i)
                 {
-                    printf("child %s: loop %d!\n", t->name, i);
+                    // printf("child %s: loop %d!\n", t->name, i);
                     time_unit();
                 }
 

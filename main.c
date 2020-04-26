@@ -7,6 +7,7 @@
 // #include "task.h"
 // #include "plist.h"
 #include "fifo.h"
+#include "sjf.h"
 
 extern int errno;
 
@@ -14,7 +15,9 @@ extern int errno;
 // #define PATH "OS_PJ1_Test/FIFO_2.txt"
 // #define PATH "OS_PJ1_Test/FIFO_3.txt"
 // #define PATH "OS_PJ1_Test/FIFO_4.txt"
-#define PATH "OS_PJ1_Test/FIFO_5.txt"
+// #define PATH "OS_PJ1_Test/FIFO_5.txt"
+
+#define PATH "OS_PJ1_Test/SJF_1.txt"
 
 
 void readFile(char*, tasks_t*);
@@ -50,6 +53,7 @@ int main(int argc, char** argv)
     //     printf("\n");
     // }
  
+    printf("start scheduling!\n");
     schedule(&taskArr);
 
 
@@ -98,6 +102,7 @@ void readFile(char* path, tasks_t* taskArr)
         taskArr->arr[count].name = name;
         taskArr->arr[count].rd_time = rd_time;
         taskArr->arr[count].exe_time = exe_time;
+        taskArr->arr[count].rem_time = exe_time;
         taskArr->arr[count].pid = -100;
         pipe(taskArr->arr[count].fd);
          

@@ -37,7 +37,7 @@ fifo.o: fifo.c fifo.h
 rr.o: rr.c rr.h
 	$(CC) $(CFLAGS) -c rr.c
 
-sjf.o: sjf.c sfh.h
+sjf.o: sjf.c sjf.h
 	$(CC) $(CFLAGS) -c sjf.c
 
 sjfp.o: sjfp.c sjfp.h
