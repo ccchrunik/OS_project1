@@ -38,8 +38,8 @@ void schedule(tasks_t* taskArr)
     pid_t test;
     while(count < num)
     {
-        printf("count = %d\n", count);
-        printf("timeline = %d\n", timeline);
+        // printf("count = %d\n", count);
+        // printf("timeline = %d\n", timeline);
         // check if some task complete
         if(next == num - 1) // end case
         {
@@ -50,7 +50,7 @@ void schedule(tasks_t* taskArr)
             }
             else if(test > 0)
             {
-                printf("process %d finish\n", next);
+                // printf("process %d finish\n", next);
                 next += 1;
             }
         }
@@ -69,7 +69,7 @@ void schedule(tasks_t* taskArr)
                 // done
                 else if(test > 0) 
                 {
-                    printf("process %d finish\n", next);
+                    // printf("process %d finish\n", next);
                     next += 1;
                     setflag = 0;
                     // next process already being created
@@ -106,7 +106,7 @@ void schedule(tasks_t* taskArr)
             // child process
             if(pid == 0)
             {
-                printf("child process %d created\n", getpid());
+                // printf("child process %d created\n", getpid());
                 // set process priority
                 CPU_ZERO(&mask);
                 CPU_SET(0, &mask);
@@ -126,7 +126,6 @@ void schedule(tasks_t* taskArr)
                 }
                 // print process information
                 t->pid = getpid();
-                printf("%s %d\n", t->name, t->pid);
  
                 // start processing
                 for(int i = 0; i < t->exe_time; ++i)
@@ -134,6 +133,7 @@ void schedule(tasks_t* taskArr)
                     // printf("child %s: loop %d!\n", t->name, i);
                     time_unit();
                 }
+                printf("%s %d\n", t->name, t->pid);
 
                 // record the end time, like getnstimeofday
                 
@@ -168,7 +168,7 @@ void schedule(tasks_t* taskArr)
             }
             else if(test > 0)
             {
-                printf("process %d finish\n", next);
+                // printf("process %d finish\n", next);
                 // break the loop
                 next += 1; 
             }
@@ -188,7 +188,7 @@ void schedule(tasks_t* taskArr)
                 // done
                 else if(test > 0) 
                 {
-                    printf("process %d finish\n", next);
+                    // printf("process %d finish\n", next);
                     next += 1;
                     setflag = 0;
                     // next process already being created

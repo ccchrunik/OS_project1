@@ -1,5 +1,8 @@
 #include "sjf.h"
 
+#define TIME_QUANTUM 500
+
+
 void time_unit()
 {
     volatile unsigned long i; 
@@ -64,6 +67,8 @@ void schedule(tasks_t* taskArr)
                 //     printf("Process %s %d\n", q.queue[i].name, q.queue[i].exe_time);
                 // }
                 // printf("\n");
+                printf("in creating queue\n");
+                pq_print(&q);
             }
         }
 
@@ -100,16 +105,20 @@ void schedule(tasks_t* taskArr)
                 {
                     setpriority(PRIO_PROCESS, getpid(), -20);
                 }
-                else
-                {
-                    setpriority(PRIO_PROCESS, getpid(), 19);
-                }
+                // else
+                // {
+                //     setpriority(PRIO_PROCESS, getpid(), 19);
+                // }
                 // print process information
                 t->pid = getpid();
  
                 // start processing
                 for(int i = 0; i < t->exe_time; ++i)
                 {
+                    if(i == 0)
+                    {
+                        setpriority(PRIO_PROCESS, getpid(), 19);
+                    }
                     // printf("child %s: loop %d!\n", t->name, i);
                     // printf("Process %s priority = %d\n", t->name, getpriority(PRIO_PROCESS, getpid()));
                     time_unit();
@@ -146,7 +155,7 @@ void schedule(tasks_t* taskArr)
             checkflag = 1;
             target = q.queue[0];
             setpriority(PRIO_PROCESS, target.pid, -20);
-            pq_remove(&q);
+            // pq_remove(&q);
             tflag = 1;
         }
 
@@ -161,6 +170,8 @@ void schedule(tasks_t* taskArr)
                 {
                     next += 1;
                     tflag = 0;
+                    // task is done
+                    pq_remove(&q);
                 }
             }
             // no task is running
@@ -168,7 +179,7 @@ void schedule(tasks_t* taskArr)
             {
                 target = q.queue[0];
                 setpriority(PRIO_PROCESS, target.pid, -20);
-                pq_remove(&q);
+                // pq_remove(&q);
                 tflag = 1;
             }
 
@@ -182,18 +193,79 @@ void schedule(tasks_t* taskArr)
                 test = waitpid(target.pid, NULL, WNOHANG);
                 // printf("test = %d\n", test);
                 // printf("priority = %d\n", getpriority(PRIO_PROCESS, target.pid));
+                
+                // the task is finish
                 if(test > 0)
                 {
+                    test = 0;
                     next += 1;
                     tflag = 0;
+                    pq_remove(&q);
+                    timestamp = 0;
 
                     // check if some tasks are pending
                     if(q.length > 0)
                     {
                         target = q.queue[0];
+                        // printf("target.pid = %d", target.pid);
                         setpriority(PRIO_PROCESS, target.pid, -20);
-                        pq_remove(&q);
+                        // pq_remove(&q);
                         tflag = 1;
+                    }
+                }
+                else if(timestamp >= TIME_QUANTUM && target.rem_time < TIME_QUANTUM)
+                {
+                    setpriority(PRIO_PROCESS, target.pid, 19);
+                    tflag = 0;
+                    timestamp = 0;
+                    for(int i = 0; i < num; ++i)
+                    {
+                        if(taskArr->arr[i].pid == target.pid)
+                        {
+                            pq_remove_item(&q, target.pid);
+                            // pq_print(&q);
+                            taskArr->arr[i].rem_time -= TIME_QUANTUM;
+                            // pq_add(&q, &taskArr->arr[i]);
+                            pq_print(&q);
+
+                            // target = taskArr->arr[i];
+                            break;
+                        }
+                    }
+                    // have some task pending
+                    if(q.length > 0)
+                    {
+                        tflag = 1;
+                        target = q.queue[0];
+                        setpriority(PRIO_PROCESS, target.pid, -20);
+                    }
+                }
+                // last over a time quantum, preempt the tasks
+                else if(timestamp >= TIME_QUANTUM && target.rem_time >= TIME_QUANTUM)
+                {
+                    setpriority(PRIO_PROCESS, target.pid, 19);
+                    tflag = 0;
+                    timestamp = 0;
+                    for(int i = 0; i < num; ++i)
+                    {
+                        if(taskArr->arr[i].pid == target.pid)
+                        {
+                            pq_remove_item(&q, target.pid);
+                            // pq_print(&q);
+                            taskArr->arr[i].rem_time -= TIME_QUANTUM;
+                            pq_add(&q, &taskArr->arr[i]);
+                            pq_print(&q);
+
+                            // target = taskArr->arr[i];
+                            break;
+                        }
+                    }
+                    // have some task pending
+                    if(q.length > 0)
+                    {
+                        tflag = 1;
+                        target = q.queue[0];
+                        setpriority(PRIO_PROCESS, target.pid, -20);
                     }
                 }
             }
@@ -202,7 +274,7 @@ void schedule(tasks_t* taskArr)
             {
                 target = q.queue[0];
                 setpriority(PRIO_PROCESS, target.pid, -20);
-                pq_remove(&q);
+                // pq_remove(&q);
                 tflag = 1;
             }
             
@@ -234,10 +306,19 @@ void schedule(tasks_t* taskArr)
             if(tflag == 1)
             {
                 test = waitpid(target.pid, NULL, WNOHANG);
+                // printf("test = %d\n", test);
                 if(test > 0)
                 {
                     next += 1;
                     tflag = 0;
+                    // task is done
+                    pq_remove(&q);
+                }
+                else if(timestamp >= TIME_QUANTUM && target.rem_time >= TIME_QUANTUM)
+                {
+                    timestamp = 0;
+                    q.queue[0].rem_time -= TIME_QUANTUM;
+                    pq_print(&q);
                 }
             }
             // no task is running
@@ -245,7 +326,7 @@ void schedule(tasks_t* taskArr)
             {
                 target = q.queue[0];
                 setpriority(PRIO_PROCESS, target.pid, -20);
-                pq_remove(&q);
+                // pq_remove(&q);
                 tflag = 1;
             }
 
@@ -255,19 +336,83 @@ void schedule(tasks_t* taskArr)
             // a task is running
             if(tflag == 1)
             {
+                // printf("target.pid = %d\n", target.pid);
                 test = waitpid(target.pid, NULL, WNOHANG);
+                // printf("test = %d\n", test);
+                // printf("priority = %d\n", getpriority(PRIO_PROCESS, target.pid));
+                
+                // the task is finish
                 if(test > 0)
                 {
+                    test = 0;
                     next += 1;
                     tflag = 0;
+                    pq_remove(&q);
+                    timestamp = 0;
 
                     // check if some tasks are pending
                     if(q.length > 0)
                     {
                         target = q.queue[0];
+                        // printf("target.pid = %d", target.pid);
                         setpriority(PRIO_PROCESS, target.pid, -20);
-                        pq_remove(&q);
+                        // pq_remove(&q);
                         tflag = 1;
+                    }
+                }
+                else if(timestamp >= TIME_QUANTUM && target.rem_time < TIME_QUANTUM)
+                {
+                    setpriority(PRIO_PROCESS, target.pid, 19);
+                    tflag = 0;
+                    timestamp = 0;
+                    for(int i = 0; i < num; ++i)
+                    {
+                        if(taskArr->arr[i].pid == target.pid)
+                        {
+                            pq_remove_item(&q, target.pid);
+                            // pq_print(&q);
+                            taskArr->arr[i].rem_time -= TIME_QUANTUM;
+                            // pq_add(&q, &taskArr->arr[i]);
+                            pq_print(&q);
+
+                            // target = taskArr->arr[i];
+                            break;
+                        }
+                    }
+                    // have some task pending
+                    if(q.length > 0)
+                    {
+                        tflag = 1;
+                        target = q.queue[0];
+                        setpriority(PRIO_PROCESS, target.pid, -20);
+                    }
+                }
+                // last over a time quantum, preempt the tasks
+                else if(timestamp >= TIME_QUANTUM && target.rem_time >= TIME_QUANTUM)
+                {
+                    setpriority(PRIO_PROCESS, target.pid, 19);
+                    tflag = 0;
+                    timestamp = 0;
+                    for(int i = 0; i < num; ++i)
+                    {
+                        if(taskArr->arr[i].pid == target.pid)
+                        {
+                            pq_remove_item(&q, target.pid);
+                            // pq_print(&q);
+                            taskArr->arr[i].rem_time -= TIME_QUANTUM;
+                            pq_add(&q, &taskArr->arr[i]);
+                            pq_print(&q);
+
+                            // target = taskArr->arr[i];
+                            break;
+                        }
+                    }
+                    // have some task pending
+                    if(q.length > 0)
+                    {
+                        tflag = 1;
+                        target = q.queue[0];
+                        setpriority(PRIO_PROCESS, target.pid, -20);
                     }
                 }
             }
@@ -276,7 +421,7 @@ void schedule(tasks_t* taskArr)
             {
                 target = q.queue[0];
                 setpriority(PRIO_PROCESS, target.pid, -20);
-                pq_remove(&q);
+                // pq_remove(&q);
                 tflag = 1;
             }
             

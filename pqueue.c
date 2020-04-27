@@ -11,10 +11,10 @@ void PQ_init(PQMgr_t* q, int num)
 /*
  remove top node and rebuild the heap
  */
-void front_heapify(PQMgr_t* q)
+void front_heapify(PQMgr_t* q, int idx)
 {
     q->length -= 1;
-    int idx = 0, test;
+    int test;
     int t1 = idx * 2 + 1;
     int t2 = idx * 2 + 2;
     // swap until read end
@@ -99,12 +99,47 @@ void pq_remove(PQMgr_t* q)
     {
         int idx = q->length - 1;
         swap(&q->queue[0], &q->queue[idx]);
-        front_heapify(q);
+        front_heapify(q, 0);
     }
 }
 
+void pq_remove_item(PQMgr_t* q, pid_t pid)
+{
+    
+    if(q->length == 1)
+    {  
+        q->length = 0;
+    }
+    else
+    {
+        int idx;
+        for(int i = 0; i < q->length; ++i)
+        {
+            if(q->queue[i].pid == pid)
+            {
+                idx = i;
+                break;
+            }
+        }
+
+        int end = q->length - 1;
+        swap(&q->queue[idx], &q->queue[end]);
+        front_heapify(q, idx);
+        
+    }
+    
+
+}
 
 
-
+void pq_print(PQMgr_t *q)
+{
+    printf("print queue\n");
+    for(int i = 0; i < q->length; ++i)
+    {
+        printf("%s %d\n", q->queue[i].name, q->queue[i].rem_time);
+    }
+    printf("\n");
+}
 
 

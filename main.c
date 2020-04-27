@@ -17,7 +17,19 @@ extern int errno;
 // #define PATH "OS_PJ1_Test/FIFO_4.txt"
 // #define PATH "OS_PJ1_Test/FIFO_5.txt"
 
-#define PATH "OS_PJ1_Test/SJF_1.txt"
+// #define PATH "OS_PJ1_Test/SJF_1.txt"
+// #define PATH "OS_PJ1_Test/SJF_2.txt"
+// #define PATH "OS_PJ1_Test/SJF_3.txt"
+// #define PATH "OS_PJ1_Test/SJF_4.txt"
+// #define PATH "OS_PJ1_Test/SJF_5.txt"
+
+// #define PATH "OS_PJ1_Test/PSJF_1.txt"
+// #define PATH "OS_PJ1_Test/PSJF_2.txt"
+// #define PATH "OS_PJ1_Test/PSJF_3.txt"
+// #define PATH "OS_PJ1_Test/PSJF_4.txt"
+#define PATH "OS_PJ1_Test/PSJF_5.txt"
+
+
 
 
 void readFile(char*, tasks_t*);

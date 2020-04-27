@@ -24,8 +24,8 @@ rr: main.o plist.o rr.o task.o
 sjf: main.o plist.o pqueue.o sjf.o
 	$(CC) $(CFLAGS) -o sjf main.o sjf.o plist.o pqueue.o task.o
 
-sjfp: main.o plist.o pqueue.o sjfp.o
-	$(CC) $(CFLAGS) -o sjfp main.o sjfp.o plist.o pqueue.o task.o
+psjf: main.o plist.o pqueue.o psjf.o
+	$(CC) $(CFLAGS) -o psjf main.o psjf.o plist.o pqueue.o task.o
 
 
 main.o: main.c 
@@ -40,8 +40,8 @@ rr.o: rr.c rr.h
 sjf.o: sjf.c sjf.h
 	$(CC) $(CFLAGS) -c sjf.c
 
-sjfp.o: sjfp.c sjfp.h
-	$(CC) $(CFLAGS) -c sjfp.c
+psjf.o: psjf.c psjf.h
+	$(CC) $(CFLAGS) -c psjf.c
 
 task.o: task.c task.h
 	$(CC) $(CFLAGS) -c task.c
