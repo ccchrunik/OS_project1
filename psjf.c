@@ -1,4 +1,4 @@
-#include "sjf.h"
+#include "psjf.h"
 
 #define TIME_QUANTUM 500
 

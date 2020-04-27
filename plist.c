@@ -5,6 +5,7 @@ void list_init(plist_t *p)
     p->dummy = malloc(sizeof(pNode_t));
     p->dummy->next = p->dummy;
     p->dummy->prev = p->dummy;
+    p->length = 0;
 }
 
 void list_insert_head(plist_t* p, task_t *t)
@@ -122,6 +123,28 @@ void list_delete_tail(plist_t* p)
 }
 
 
+void list_print(plist_t* p)
+{
+    pNode_t* node = p->dummy;
 
+    if(p->length == 0)
+    {
+        printf("empty list!\n");
+        return ;
+    }
+    else
+    {
+        // printf("print new node!\n");  
+        // printf("length = %d\n", p->length); 
+        printf("print list!\n"); 
+        for(int i = 0; i < p->length; ++i)
+        {
+            node = node->next;
+            printf("node %s = %d\n", node->task->name, node->task->rem_time);
+        }
+        printf("\n");
+        
+    }
+}
 
 

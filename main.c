@@ -27,7 +27,15 @@ extern int errno;
 // #define PATH "OS_PJ1_Test/PSJF_2.txt"
 // #define PATH "OS_PJ1_Test/PSJF_3.txt"
 // #define PATH "OS_PJ1_Test/PSJF_4.txt"
-#define PATH "OS_PJ1_Test/PSJF_5.txt"
+// #define PATH "OS_PJ1_Test/PSJF_5.txt"
+
+// #define PATH "OS_PJ1_Test/RR_1.txt"
+// #define PATH "OS_PJ1_Test/RR_2.txt"
+// #define PATH "OS_PJ1_Test/RR_3.txt"
+// #define PATH "OS_PJ1_Test/RR_4.txt"
+// #define PATH "OS_PJ1_Test/RR_5.txt"
+
+#define PATH "OS_PJ1_Test/TIME_MEASUREMENT.txt"
 
 
 

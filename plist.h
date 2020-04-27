@@ -32,7 +32,7 @@ void list_insert_head(plist_t* vl, task_t *vnode);
 void list_insert_tail(plist_t* vl, task_t *vnode);
 void list_delete_head(plist_t* vl);
 void list_delete_tail(plist_t* vl);
-// void list_traverse(plist_t* vl);
+void list_print(plist_t* vl);
 
 
 #endif
