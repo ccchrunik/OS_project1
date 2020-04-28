@@ -1,9 +1,9 @@
 # makefile for scheduling program
 #
-# make rr - for round-robin scheduling
+# make rr - for RR scheduling
 # make fifo - for FIFO scheduling
 # make sjf - for SJF scheduling
-# make sjfp - for SJFP scheduling
+# make psjf - for PSJF scheduling
 
 CC=gcc
 CFLAGS=-Wall
