@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdio.h>
+#include <string.h>
 
 
 #define TID 0
@@ -27,6 +29,7 @@ typedef struct task{
 
 typedef struct tasks{
     int num;
+    char *name;
     task_t *arr;
     task_t *q;
     
@@ -38,5 +41,8 @@ typedef struct process_set{
 } p_set;
 
 void swap(task_t*, task_t*);
+void time_unit();
+char* time_concat(struct timespec *t);
+
 
 #endif

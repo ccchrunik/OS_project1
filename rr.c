@@ -8,20 +8,12 @@
 
 #define RR_QUANTUM 500
 
-void time_unit()
-{
-    volatile unsigned long i; 
-    // for(i = 0; i < 1000000UL; i++);
-    for(i = 0; i < 1000000UL; ++i)
-    {
-        for(int j = 0; j < 1; ++j);
-    }
-}
+
 
 /*
  This function is for FIFO scheduling.
  */
-void schedule(tasks_t* taskArr)
+void schedule_rr(tasks_t* taskArr)
 {
     pid_t pid;
     cpu_set_t mask;
@@ -67,7 +59,7 @@ void schedule(tasks_t* taskArr)
                 // insert a node into list
                 list_insert_tail(&p, &taskArr->arr[tp]);
                 create_flag += 1;
-                list_print(&p);
+                // list_print(&p);
             }
         }  
 
@@ -79,6 +71,7 @@ void schedule(tasks_t* taskArr)
 
             // create new process
             t = &taskArr->arr[count];
+            syscall(334, &t->start_time);
             pid = fork();
 
             // child process
@@ -117,6 +110,8 @@ void schedule(tasks_t* taskArr)
                 printf("%s %d\n", t->name, t->pid);
 
                 // record the end time, like getnstimeofday
+                syscall(334, &t->end_time);
+                syscall(335, getpid(), time_concat(&t->start_time), time_concat(&t->end_time));
                 
                 // process termination
                 exit(0);
@@ -155,7 +150,7 @@ void schedule(tasks_t* taskArr)
                 // setpriority(PRIO_PROCESS, taskArr->arr[next].pid, -20);
                 timestamp = 0;
                 target->rem_time -= RR_QUANTUM;
-                list_print(&p);
+                // list_print(&p);
             }
         }
         else if(next < num - 1)
@@ -310,14 +305,10 @@ void schedule(tasks_t* taskArr)
         timestamp += 1;
 
     }
-    // maybe of no use
-    // check if it termintate normally
-    // for(int i = 0; i < taskArr->num; ++i)
-    // {
-    //     waitpid(taskArr->arr[i].pid, NULL, 0);
-    // }
 
-    printf("Parent finish!\n");
+
+
+    // printf("Parent finish!\n");
 
 
 }

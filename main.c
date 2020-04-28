@@ -7,7 +7,9 @@
 // #include "task.h"
 // #include "plist.h"
 #include "fifo.h"
+#include "rr.h"
 #include "sjf.h"
+#include "psjf.h"
 
 extern int errno;
 
@@ -40,7 +42,8 @@ extern int errno;
 
 
 
-void readFile(char*, tasks_t*);
+// void readFile(char*, tasks_t*);
+void readFile(tasks_t*);
 
 const char *sched_policy[] = {
 "SCHED_OTHER",
@@ -48,6 +51,8 @@ const char *sched_policy[] = {
 "SCHED_RR",
 "SCHED_BATCH"
 };
+
+
 
 /*
  reminder: I want to use vector to store this reconstruct data now.
@@ -60,9 +65,12 @@ const char *sched_policy[] = {
 int main(int argc, char** argv)
 {
     tasks_t taskArr;
+    char *sch_type;
 
-    readFile(PATH, &taskArr);
+    readFile(&taskArr);
 
+    sch_type = taskArr.name;
+    // printf("type = %s\n", sch_type);
     // print data
     // for(int i = 0; i < taskArr.num; ++i)
     // {
@@ -73,43 +81,67 @@ int main(int argc, char** argv)
     //     printf("\n");
     // }
  
-    printf("start scheduling!\n");
-    schedule(&taskArr);
+    // printf("start scheduling!\n");
+    if(sch_type[0] == 'F')
+    {
+        // printf("start %s scheduling\n", "FIFO");
+        schedule_fifo(&taskArr);
+    }
+    else if(sch_type[0] == 'R')
+    {
+        // printf("start %s scheduling\n", "RR");
+        schedule_rr(&taskArr);
+    }
+    else if(sch_type[0] == 'S')
+    {
+        // printf("start %s scheduling\n", "SJF");
+        schedule_sjf(&taskArr);
+    }
+    else if(sch_type[0] == 'P')
+    {
+        // printf("start %s scheduling\n", "PSJF");
+        schedule_psjf(&taskArr);
+    }
+    else
+    {
+
+        printf("No type found!\n");
+    }
+    
 
 
     return 0;
 }
 
-
-void readFile(char* path, tasks_t* taskArr)
+void readFile(tasks_t* taskArr)
 {
-    FILE* in;
     char* temp;
     char buf[100];
     char* name;
     int num, count = 0;
     int rd_time, exe_time;
 
-    in = fopen(PATH, "r");
+    // in = fopen(PATH, "r");
     // read head
-    fgets(buf, 100, in);
+    fgets(buf, 100, stdin);
     name = strdup(buf);
     name[strlen(name) - 1] = 0;
-    fgets(buf, 100, in);
+    taskArr->name = name;
+    fgets(buf, 100, stdin);
     num = atoi(buf);    
     taskArr->num = num;
 
 
-    printf("name = %s\n", name);
-    printf("num = %d\n", num);
-    printf("\n");
+    // printf("name = %s\n", name);
+    // printf("num = %d\n", num);
+    // printf("\n");
 
     // initialization
     taskArr->arr = malloc(num * sizeof(task_t));
     taskArr->q = malloc(num * sizeof(task_t));
  
     // read remain data from file
-    while (fgets(buf, 100, in) != NULL)
+    while (fgets(buf, 100, stdin) != NULL)
     {
         // printf("read data!\n");
         temp = strdup(buf);
@@ -130,8 +162,60 @@ void readFile(char* path, tasks_t* taskArr)
         free(temp);
     }
 
-    fclose(in);
+    // fclose(in);
 }
+
+// void readFile(char* path, tasks_t* taskArr)
+// {
+//     FILE* in;
+//     char* temp;
+//     char buf[100];
+//     char* name;
+//     int num, count = 0;
+//     int rd_time, exe_time;
+
+//     in = fopen(PATH, "r");
+//     // read head
+//     fgets(buf, 100, in);
+//     name = strdup(buf);
+//     name[strlen(name) - 1] = 0;
+//     fgets(buf, 100, in);
+//     num = atoi(buf);    
+//     taskArr->num = num;
+
+
+//     printf("name = %s\n", name);
+//     printf("num = %d\n", num);
+//     printf("\n");
+
+//     // initialization
+//     taskArr->arr = malloc(num * sizeof(task_t));
+//     taskArr->q = malloc(num * sizeof(task_t));
+ 
+//     // read remain data from file
+//     while (fgets(buf, 100, in) != NULL)
+//     {
+//         // printf("read data!\n");
+//         temp = strdup(buf);
+//         name = strsep(&temp, " ");
+//         rd_time = atoi(strsep(&temp, " "));
+//         exe_time = atoi(strsep(&temp, " "));
+
+//         // add data into taskArr
+//         taskArr->arr[count].id = count + 1;
+//         taskArr->arr[count].name = name;
+//         taskArr->arr[count].rd_time = rd_time;
+//         taskArr->arr[count].exe_time = exe_time;
+//         taskArr->arr[count].rem_time = exe_time;
+//         taskArr->arr[count].pid = -100;
+//         pipe(taskArr->arr[count].fd);
+         
+//         count++;
+//         free(temp);
+//     }
+
+//     fclose(in);
+// }
 
 
 

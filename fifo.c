@@ -6,16 +6,12 @@
 // if not, then it meansa process terminated or somewhat, 
 // then change other process's priority
 
-void time_unit()
-{
-    volatile unsigned long i; 
-    for(i = 0; i < 1000000UL; i++);
-}
+
 
 /*
  This function is for FIFO scheduling.
  */
-void schedule(tasks_t* taskArr)
+void schedule_fifo(tasks_t* taskArr)
 {
     pid_t pid;
     cpu_set_t mask;
@@ -101,6 +97,7 @@ void schedule(tasks_t* taskArr)
 
             // create new process
             t = &taskArr->arr[count];
+            syscall(334, &t->start_time);
             pid = fork();
 
             // child process
@@ -134,9 +131,10 @@ void schedule(tasks_t* taskArr)
                     time_unit();
                 }
                 printf("%s %d\n", t->name, t->pid);
-
-                // record the end time, like getnstimeofday
                 
+                // record the end time, like getnstimeofday
+                syscall(334, &t->end_time);
+                syscall(335, getpid(), time_concat(&t->start_time), time_concat(&t->end_time));
                 // process termination
                 exit(0);
             }
@@ -210,7 +208,7 @@ void schedule(tasks_t* taskArr)
         waitpid(taskArr->arr[i].pid, NULL, 0);
     }
 
-    printf("Parent finish!\n");
+    // printf("Parent finish!\n");
 
 
 }

@@ -8,12 +8,15 @@
 CC=gcc
 CFLAGS=-Wall
 
+all: main.o task.o plist.o pqueue.o fifo.o rr.o sjf.o psjf.o
+	$(CC) $(CFLAGS) -o schedule main.o task.o plist.o pqueue.o fifo.o rr.o sjf.o psjf.o
+
 clean:
 	rm -rf *.o
 	rm -rf fifo
 	rm -rf rr
 	rm -rf sjf
-	rm -rf sjfp
+	rm -rf psjf
 
 fifo: main.o plist.o fifo.o task.o
 	$(CC) $(CFLAGS) -o fifo main.o fifo.o plist.o task.o

@@ -15,10 +15,11 @@
 #include <sys/wait.h>
 // #include <linux/timekeeping.h>
 #include <time.h>
+#include <sys/syscall.h>
 
 #include "plist.h"
 
-void schedule(tasks_t* t);
+void schedule_fifo(tasks_t* t);
 void time_unit();
 
 #endif

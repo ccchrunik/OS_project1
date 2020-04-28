@@ -3,20 +3,12 @@
 #define TIME_QUANTUM 500
 
 
-void time_unit()
-{
-    volatile unsigned long i; 
-    for(i = 0; i < 1000000UL; i++);
-    // for(i = 0; i < 1000000UL; ++i)
-    // {
-    //     for(int j = 0; j < 1; ++j);
-    // }
-}
+
 
 /*
  This function is for SJF scheduling.
  */
-void schedule(tasks_t* taskArr)
+void schedule_psjf(tasks_t* taskArr)
 {
     pid_t pid;
     cpu_set_t mask;
@@ -67,8 +59,8 @@ void schedule(tasks_t* taskArr)
                 //     printf("Process %s %d\n", q.queue[i].name, q.queue[i].exe_time);
                 // }
                 // printf("\n");
-                printf("in creating queue\n");
-                pq_print(&q);
+                // printf("in creating queue\n");
+                // pq_print(&q);
             }
         }
 
@@ -80,8 +72,7 @@ void schedule(tasks_t* taskArr)
        
             // create new process
             t = &taskArr->arr[count];
-            // printf("count = %d\n", count);
-            // printf("child process %s created\n", t->name);
+            syscall(334, &t->start_time);
             pid = fork();
 
             // child process
@@ -124,10 +115,13 @@ void schedule(tasks_t* taskArr)
                     time_unit();
                 }
 
+                printf("%s %d\n", t->name, t->pid);
+
                 // record the end time, like getnstimeofday
+                syscall(334, &t->end_time);
+                syscall(335, getpid(), time_concat(&t->start_time), time_concat(&t->end_time));
                 
                 // process termination
-                printf("%s %d\n", t->name, t->pid);
                 exit(0);
             }
             // main process
@@ -226,7 +220,7 @@ void schedule(tasks_t* taskArr)
                             // pq_print(&q);
                             taskArr->arr[i].rem_time -= TIME_QUANTUM;
                             // pq_add(&q, &taskArr->arr[i]);
-                            pq_print(&q);
+                            // pq_print(&q);
 
                             // target = taskArr->arr[i];
                             break;
@@ -254,7 +248,7 @@ void schedule(tasks_t* taskArr)
                             // pq_print(&q);
                             taskArr->arr[i].rem_time -= TIME_QUANTUM;
                             pq_add(&q, &taskArr->arr[i]);
-                            pq_print(&q);
+                            // pq_print(&q);
 
                             // target = taskArr->arr[i];
                             break;
@@ -318,7 +312,7 @@ void schedule(tasks_t* taskArr)
                 {
                     timestamp = 0;
                     q.queue[0].rem_time -= TIME_QUANTUM;
-                    pq_print(&q);
+                    // pq_print(&q);
                 }
             }
             // no task is running
@@ -373,7 +367,7 @@ void schedule(tasks_t* taskArr)
                             // pq_print(&q);
                             taskArr->arr[i].rem_time -= TIME_QUANTUM;
                             // pq_add(&q, &taskArr->arr[i]);
-                            pq_print(&q);
+                            // pq_print(&q);
 
                             // target = taskArr->arr[i];
                             break;
@@ -401,7 +395,7 @@ void schedule(tasks_t* taskArr)
                             // pq_print(&q);
                             taskArr->arr[i].rem_time -= TIME_QUANTUM;
                             pq_add(&q, &taskArr->arr[i]);
-                            pq_print(&q);
+                            // pq_print(&q);
 
                             // target = taskArr->arr[i];
                             break;
@@ -433,7 +427,7 @@ void schedule(tasks_t* taskArr)
 
 
 
-    printf("Parent finish!\n");
+    // printf("Parent finish!\n");
 
 
 }
